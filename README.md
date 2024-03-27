@@ -13,6 +13,7 @@ Revision/Addition Description and Link:
 # AJ S
 
 Initial Description and Link:
+purrr and mapping 
 
 Revision/Addition Description and Link:
 
