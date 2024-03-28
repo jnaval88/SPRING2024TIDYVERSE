@@ -51,8 +51,10 @@ Revision/Addition Description and Link:
 # Dhanya A
 
 Initial Description and Link:
+The Create Tidy verse Assignment using purr,dplyr, stringr, forcats within the tidyverse package.
 
 Revision/Addition Description and Link:
+https://raw.githubusercontent.com/datanerddhanya/SPRING2024TIDYVERSE/main/Dhanya_Nair_DATA607Assignment8.Rmd
 
 
 # Evelyn B
