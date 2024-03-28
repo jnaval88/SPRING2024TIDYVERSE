@@ -13,7 +13,8 @@ Revision/Addition Description and Link:
 # AJ S
 
 Initial Description and Link:
-purrr and mapping 
+* Demonstrates using the `purrr` package to `map` custom functions to data
+* [tidyverse CREATE: using the `purrr` package with data](https://github.com/annejscott/DATA607/raw/main/assignments/tidyverse/straumanscott-tidyverse-purr.rmd)
 
 Revision/Addition Description and Link:
 
