@@ -1,0 +1,140 @@
+---
+title: "DATA607Assignment Tidyverse"
+author: "Dhanya Nair"
+date: "2024-03-15"
+output: 
+  html_document: default
+  pdf_document: default
+---
+## Data from fivethirtyeight website
+Source: recent grads list downloaded from the site: [via]https://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/
+
+readme file to understand the variables: [via]https://github.com/fivethirtyeight/data/blob/master/college-majors/readme.md
+
+## Packages being used are purr,dplyr, stringr, forcats within the tidyverse package
+
+## Load packages
+
+```{r,warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(dplyr)
+library(purrr)
+library(stringr)
+library(forcats) 
+```
+
+
+## Reading data from the source file location in fivethirtyeight college-majors grads dataset
+
+```{r, warning=FALSE}
+college_grads <- read.csv('https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/recent-grads.csv')
+
+str(college_grads)
+```
+
+## Using purr package functions for data analysis and transformation
+```{r}
+
+# using map() function in purr package
+# map()returns a a vector or  multiple vectors based on the input provided
+# it performs the function for all the values in the vector.It performs sort function in this case.
+
+college_majors_final <- college_grads  %>%
+  count(Major_category) %>%
+  rename(no_of_majors =n) %>%
+  map(sort, decreasing = TRUE)
+
+# 2 vectors major category and no. of majors are returned
+head(college_majors_final)
+
+
+# map_chr() always returns a character vector and we can perform character functions
+college_majors_final$Major_category <- college_majors_final$Major_category  |> 
+  map_chr(str_replace_all, "&.+","")
+
+
+# example using discard()
+college_majors_final$no_of_majors <- college_majors_final$no_of_majors |>
+  discard(~.<10)
+
+# the vectors ost transformation
+head(college_majors_final)
+
+```
+
+## Q: What is the college major category distribution by men and women?
+## A: Use ggplot to compare various major category populations
+
+```{r}
+#summarize to a table aggregating major category, count of men and count of women variable
+major_category <- college_grads  %>%
+  group_by(Major_category) %>%
+  summarize(count_Men = sum(Men,na.rm = TRUE),count_women = sum(Women,na.rm = TRUE) ) 
+
+#convert to a data frame
+major_category_wide <- as.data.frame(major_category )
+
+
+#pivot the dataframe to longer
+major_category_long <- pivot_longer(major_category_wide , cols = c(count_Men, count_women), names_to = "gender", values_to = "count")
+
+# remove "count" text  from the gender variable values
+major_category_long$gender <- str_replace_all(major_category_long$gender,".*_","")
+
+
+# Scale count values to thousands
+major_category_long$count <- major_category_long$count / 1000
+
+
+#visualize the data
+# show male and female count side by side using position = dodge
+# angle the x axis test by 45
+#change the color of the fill variable using scale_fill_manual function
+major_category_long  %>% 
+  ggplot(aes(x = Major_category , y = count , fill = gender)) + 
+  geom_col(position="dodge") +
+  labs(title = "Counts of Men and Women by College Major Category",
+       x = "College Major Category",
+       y = "Count(in thousands)",
+       fill = "Gender") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = c("blue", "pink"))
+
+
+```
+
+## How do I flip coordinates?
+
+```{r}
+major_category_long  %>% 
+  ggplot(aes(x = Major_category , y = count , fill = gender)) + 
+  geom_col(position="dodge") +
+  labs(title = "Counts of Men and Women by College Major Category",
+       x = "College Major Category",
+       y = "Count(in thousands)",
+       fill = "Gender") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = c("blue", "pink")) +coord_flip()
+
+```
+
+
+## How do I change sort order to view the most count values first?
+i used the fct_reorder function in forcats package
+
+
+```{r}
+
+major_category_long  %>% 
+  ggplot(aes(x = fct_reorder(Major_category,count)  , y = count , fill = gender)) + 
+  geom_col(position="dodge") +
+  labs(title = "Counts of Men and Women by College Major Category",
+       x = "College Major Category",
+       y = "Count(in thousands)",
+       fill = "Gender") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(values = c("blue", "pink")) +coord_flip()
+
+```
