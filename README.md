@@ -95,6 +95,7 @@ Revision/Addition Description and Link:
 # Koohyar P
 
 Initial Description and Link:
+Koohyar Has upated the code and added a line to creat a Koch snowflake. Kock snowflake is a fractal and it is an interesting concenpt. Code is copied and not written by KP.
 
 Revision/Addition Description and Link:
 
