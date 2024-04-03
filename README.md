@@ -13,6 +13,8 @@ Revision/Addition Description and Link:
 # AJ S
 
 Initial Description and Link:
+* Demonstrates using the `purrr` package to `map` custom functions to data
+* [tidyverse CREATE: using the `purrr` package with data](https://github.com/annejscott/DATA607/raw/main/assignments/tidyverse/straumanscott-tidyverse-purr.rmd)
 
 Revision/Addition Description and Link:
 
@@ -20,6 +22,7 @@ Revision/Addition Description and Link:
 # Alexander S
 
 Initial Description and Link:
+Alex's initial work.
 
 Revision/Addition Description and Link:
 
@@ -48,8 +51,10 @@ Revision/Addition Description and Link:
 # Dhanya A
 
 Initial Description and Link:
+The Create Tidy verse Assignment using purr,dplyr, stringr, forcats within the tidyverse package.
 
 Revision/Addition Description and Link:
+https://raw.githubusercontent.com/datanerddhanya/SPRING2024TIDYVERSE/main/Dhanya_Nair_DATA607Assignment8.Rmd
 
 
 # Evelyn B
