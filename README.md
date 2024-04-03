@@ -124,6 +124,8 @@ Revision/Addition Description and Link:
 # Nikoleta Nick E
 
 Initial Description and Link:
+* Demonstrates the use of readr,dplyr,ggplot2 and their functions to analyse the dataset.
+
 
 Revision/Addition Description and Link:
 

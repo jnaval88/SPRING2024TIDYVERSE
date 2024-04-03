@@ -1,0 +1,114 @@
+---
+title: "TidyVerse assignment"
+author: "Nikoleta Emanouilidi"
+date: "2024-04-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **LINKS**
+### The data I used can be found at Kaggle and more specifically in that link https://www.kaggle.com/datasets/jatinthakur706/most-watched-netflix-original-shows-tv-time/data
+
+### I uploaded it on my github account. Here is the link for the raw file https://raw.githubusercontent.com/NikoletaEm/607LABS/main/netflix.csv
+
+## *LOAD THE LIBRARIES*
+
+### We will load the desired libraries. In this vignette, we'll explore the Netflix dataset using the **readr**, **dplyr** and **ggplot2** packages from the TidyVerse
+
+```{r load-libraries, message=FALSE}
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+## **READR**
+
+### We'll use readr and more specifically read.csv() to read the Netflix dataset and in that way import it into the file.
+
+```{r}
+netflix<- read.csv("https://raw.githubusercontent.com/NikoletaEm/607LABS/main/netflix.csv")
+```
+
+### Now that the data is imported we will examine the structure of the dataset and the first few rows, using str() which displays the structure of the dataset and head() which displays the first few rows of the dataset.
+
+```{r}
+head(netflix) 
+## The votes are character , we'll change it now into numeric
+netflix$votes <- as.numeric(gsub(",", "", netflix$votes))
+str(netflix)
+```
+
+## **DPLYR**
+
+### Now, let's perform some data manipulation tasks using dplyr.
+### We'll rename the columns using rename() to enhance the readability.
+
+```{r}
+netflix <- netflix %>%
+  rename(
+    "index" = lister.item.index,
+    "title" = lister.item.header )
+```
+
+### *Q1*
+### Q: What is the average rating of the series with certificate 15? 
+### A: We'll filter data to include only Netflix shows with certificate 15, using filter() and calculate the average rating with the help of summarise()
+
+```{r}
+netflix_15 <- netflix %>%
+  filter(certificate == 15)
+
+avg_rating_15 <- netflix_15 %>%
+  summarise(
+    average_rating = mean(rating, na.rm = TRUE),
+    total_shows = n()
+  )
+
+avg_rating_15
+```
+### So,we have 53 shows with certificate 15 and their average rating is 7.7
+
+### *Q2*
+### Q: Which genre has the most votes in total?
+### A: We'll find that using one function from *tidyr* package called separate_rows (which is used to split a single column containing delimited values into multiple rows) and 3 functions from dplyr which are group_by() ( used to group the data by one or more columns), summarise() (used to summarize the data within each group,in our case it calculates the sum of the votes column within each genre group and creates a new column called total_votes to store the result) and arrange() (used to reorder the rows of the dataframe based on one or more columns)
+
+```{r}
+
+genre_votes <- netflix %>%
+  separate_rows(genre, sep = ", ") %>%
+  group_by(genre) %>%
+  summarise(total_votes = sum(votes, na.rm = TRUE)) %>%
+  arrange(desc(total_votes))
+
+head(genre_votes)
+
+```
+### As we see above the genre gathering the greatest number of votes is Drama.
+
+## **GGPLOT2**
+
+### Q:How does the rating distribution differ across various genres for TV shows available on Netflix with a certificate of 15?
+### A: In order to answer this question we need to complete some steps. First, we'll separate the rows for each genre.Then we'll group the data by genre and use the do() function from dplyr to create separate ggplot objects for each genre and each plot will visualize the ratings of TV shows within that genre using a bar chart.Finally,(in this step we'll get the answer to the question) we'll display separate plots for each genre, showcasing the ratings of TV shows within that genre. Each plot is labeled with the genre name for easy identification, enabling the viewer to observe how ratings differ across the different genres.
+
+```{r}
+netflix_15 <- netflix_15 %>%
+  separate_rows(genre, sep = ", ")
+
+genre_plots <- netflix_15 %>%
+  group_by(genre) %>%
+  do(genre_plot = ggplot(data = ., aes(x = reorder(title, rating), y = rating)) +
+                          geom_bar(stat = "identity", fill = "purple") +
+                          labs(title = paste("Ratings for", unique(.$genre)),
+                               x = "TV Show",
+                               y = "Rating") +
+                          theme_minimal() +
+                          theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+
+
+print(genre_plots$genre_plot)
+```
