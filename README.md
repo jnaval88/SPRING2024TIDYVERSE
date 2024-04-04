@@ -171,6 +171,10 @@ Revision/Addition Description and Link:
 
 Initial Description and Link:
 
+Demonstrates the use of dplyr and ggplot2 from the tidyverse package.
+
+https://github.com/ZIXIANNOW/SPRING2024TIDYVERSE/blob/main/Zixian_Liang_Tidyverse.Rmd
+
 Revision/Addition Description and Link:
 
 
