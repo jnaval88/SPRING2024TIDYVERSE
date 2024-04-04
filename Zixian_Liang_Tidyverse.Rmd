@@ -1,0 +1,127 @@
+---
+title: "TidyVerse CREATE assignment"
+author: "ZIXIAN LIANG"
+date: "2024-03-13"
+output:
+  html_document:
+     toc: true
+     toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Introduction
+
+
+The goal of this task is to select a dataset from a web source and utilize TidyVerse packages to create a programming vignette. This vignette aims to demonstrate the use of one or more features provided by the TidyVerse package in combination with the chosen dataset.
+
+
+
+
+
+
+```{r include=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+## Data Acquisition
+
+
+Input file:"best_selling_switch_games.csv” from
+
+https://github.com/ZIXIANNOW/DATA607Tidyverse/blob/main/best_selling_switch_games.csv
+
+
+Source:https://www.kaggle.com/datasets/kabhishm/best-selling-nintendo-switch-video-games
+
+
+```{r}
+url <- 'https://raw.githubusercontent.com/ZIXIANNOW/DATA607Tidyverse/main/best_selling_switch_games.csv'
+database <- read_csv(url)
+```
+
+
+
+```{r}
+kbl(database) %>%
+  kable_paper() %>%
+  scroll_box(width = "100%", height = "400px")
+```
+
+
+***
+
+
+Use "anyNA(database)" to check for the presence of any missing values in the database.
+
+
+```{r}
+anyNA(database)
+```
+
+***
+
+
+## Dplyr package - mutate()
+
+
+Here I utilize the mutate function to create a new variable called "pub_category"
+
+
+```{r}
+database <- database %>%
+  mutate(pub_category = case_when(
+    grepl("Pokémon", publisher) ~ "The Pokémon Nintendo",
+    grepl("Nintendo", publisher) ~ "Nintendo",
+    TRUE ~ "Other"))
+```
+
+
+
+```{r}
+kbl(database) %>%
+  kable_paper() %>%
+  scroll_box(width = "100%", height = "400px")
+```
+
+
+
+## Dplyr package - summarise()
+
+
+
+Here I utilize the summarise function to aggregate data by "pub_category", calculating the total sales and counting the number of records in each category.
+
+
+```{r}
+datasum<- database %>%
+group_by(pub_category) %>%
+summarise(total_sales = sum(copies_sold),count = n())
+datasum
+```
+
+
+
+
+## ggplot2 package - ggplot()
+
+
+Here, I employ the ggplot function to generate a bar plot, representing the total sales by publisher categories.
+
+
+
+```{r}
+ggplot(datasum, aes(x = pub_category, y = total_sales, fill = pub_category)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Copy Sales by Publisher (in Millions)", x = "Publisher", y = "Total Sales") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_y_continuous(labels = function(x) sprintf("%.2fM", x/1000000))
+```
+
