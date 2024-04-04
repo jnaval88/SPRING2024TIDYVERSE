@@ -110,6 +110,8 @@ Revision/Addition Description and Link:
 # Lucas W
 
 Initial Description and Link:
+Demonstrate the functionalities of dplyr, tidyr, ggplot2, and readr using the soccer SPI dataset
+https://github.com/lucasweyrich958/SPRING2024TIDYVERSE/blob/main/Tidyverse_Create_LW.Rmd
 
 Revision/Addition Description and Link:
 
