@@ -44,7 +44,8 @@ Revision/Addition Description and Link:
 # Brandon C
 
 Initial Description and Link:
-test
+* Demonstrates how to use multple functions from dplyr and ggplot2 to showcase the reults
+* [https://github.com/acatlin/FALL2021TIDYVERSE/blob/main/Cunningham_Tidyverse.rmd](https://github.com/acatlin/SPRING2024TIDYVERSE/blob/main/Cunningham_Tidyverse.rmd)
 
 Revision/Addition Description and Link:
 
