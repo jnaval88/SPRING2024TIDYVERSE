@@ -1,0 +1,66 @@
+---
+title: "Cunningham - TidyVerse ggplot2"
+author: "Brandon Cunningham"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Intro
+I am using data from the Kaggle dataset [Fuel Economy](https://www.kaggle.com/datasets/sahirmaharajj/fuel-economy)
+which I have uploaded to [github](https://github.com/btc2628/DATA607/blob/main/fuel_data/fuel.csv) for easy access to the data.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE, message = FALSE, warning = FALSE)
+library(knitr)
+library(dplyr)
+library(readxl)
+library(httr)
+library(tidyverse)
+library(ggplot2)
+```
+
+In this vignette I will be using data on fuel economy to show off features of ggplot2 and dplyr.
+
+```{r}
+url <- 'https://raw.githubusercontent.com/btc2628/DATA607/main/fuel_data/fuel.csv'
+fuel_raw <- readr::read_csv(url)
+fuel_narrowed <- fuel_raw[, c('make', 'model', 'year', 'class', 'drive', 'transmission', 'engine_cylinders', 'engine_displacement', 'turbocharger', 'fuel_type', 'combined_mpg_ft1')]
+```
+
+
+Now we have the data loaded, however while looking at the raw data I noticed there were a lot of different transmission types, we can use dplyr to figure out just how many there are and get a good view of them using dplyr::select() to choose the column we would like to inspect, and dplyr::distinct() to get all distinct values from that column.
+```{r}
+transmission_sample <- fuel_narrowed %>%
+  dplyr::select(transmission) %>%
+  dplyr::distinct()
+transmission_sample
+```
+As we can see, there are 47 distinct values in the transmission column including NA. However what we might want to do for easier analysis is narrow this down to their major categories by using the mutate function in dplyr to grab only the first word from the column which in this case would be the transmission type, and filter function to remove any NA values.
+
+```{r}
+fuel_narrowed <- fuel_narrowed %>%
+  dplyr::filter(!is.na(transmission)) %>%
+  dplyr::mutate(transmission = str_extract(transmission, "^[^\\s\\(]+"))
+
+transmission_new <- fuel_narrowed %>%
+  dplyr::select(transmission) %>%
+  dplyr::distinct()
+transmission_new
+```
+After mutating with dplyr we are able to narrow down the number of transmission types to 3 which makes the data a lot more usable for analysis.  
+
+And now we can use ggplot2 to create a graph for each of the 3 types of transmission we found plotting the mean mpg of each for each year we have data for. 
+```{r}
+ggplot(fuel_narrowed, aes(x=year, y=combined_mpg_ft1, group=transmission, fill=transmission)) + 
+   geom_bar(stat="summary", fun="mean", show.legend = FALSE) +
+  facet_wrap(~transmission, scales = 'free_x') + 
+  labs(x='Year', y='Combined MPG') 
+```
+
+
+
+
+
+
+
+
