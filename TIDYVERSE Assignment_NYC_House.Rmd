@@ -1,0 +1,107 @@
+---
+title: "TIDYVERSE Assignment"
+author: "angel"
+date: "2024-04-07"
+output: html_document
+---
+
+## Task: to create a vignette that demonstrates how to use one or more of the capabilities of the selected TidyVerse package with your selected dataset.
+
+# The data set that I will be using is the current homes for sale in NY
+#https://www.kaggle.com/datasets/nelgiriyewithana/new-york-housing-market
+
+#I will be demonstrating how to use  package with readr, dplyr,ggplot2 
+```{r}
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+
+```
+
+
+#read the csv for data on current house for sales in NY
+```{r}
+df <- read.csv("https://raw.githubusercontent.com/Angelogallardo05/Data606-proposal/main/NY-House-Dataset.csv")
+```
+
+```{r}
+head(df,3)
+```
+
+# dplyr
+
+#Remove NA 
+```{r}
+df <- df %>%
+  na.omit(df)%>%
+  mutate(PRICE = as.numeric(PRICE))
+```
+
+#mutate to combine Queens County with Queens
+```{r}
+df <- df %>%
+  mutate(SUBLOCALITY = case_when(
+    SUBLOCALITY == "Queens" ~ "Queens County",
+    TRUE ~ SUBLOCALITY  
+  ))
+```
+
+
+#filter the data to remove outliers, and the type of home for sale to be a house in Queens
+```{r}
+filtered_df <- df %>%
+  filter(PROPERTYSQFT != 2184.207862)%>%
+  filter(TYPE == "House for sale", SUBLOCALITY == "Queens County")
+
+# Check the filtered dataframe
+
+```
+
+
+#Summerize the average price, beds, baths and sqft. Average house for sale price in Queens is $1.1MM with about 4 beds and 2.5 baths and 1,957 sqft
+```{r}
+summary_stats <- filtered_df %>%
+  summarise(
+    count = n(),                             
+    avg_price = mean(PRICE, na.rm = TRUE),   
+    median_price = median(PRICE, na.rm = TRUE),  
+    min_price = min(PRICE, na.rm = TRUE),     
+    max_price = max(PRICE, na.rm = TRUE),     
+    avg_beds = mean(BEDS, na.rm = TRUE),      
+    avg_bath = mean(BATH, na.rm = TRUE),      
+    avg_sqft = mean(PROPERTYSQFT, na.rm = TRUE)  
+  )
+
+# View the summary statistics
+print(summary_stats)
+```
+
+
+# ggplot2
+
+
+#use ggplot to visualize the correlation between Price and sqft, price and beds, Price and baths in queens. Seems like sqfootage and Price have a linear correlation
+```{r}
+ggplot(filtered_df, aes(x = PROPERTYSQFT, y = PRICE)) +
+  geom_point() +  
+  geom_smooth(method = "lm", se = FALSE) +  
+  labs(x = "Property Square Footage", y = "Price", title = "Price vs. Property Square Footage") +
+  scale_y_continuous(labels = scales::comma_format(scale = 1e-3, suffix = "K")) +
+  theme_minimal()
+
+ggplot(filtered_df, aes(x = BEDS, y = PRICE)) +
+  geom_point() +  
+  geom_smooth(method = "lm", se = FALSE) +  
+  labs(x = "Beds", y = "Price", title = "Price vs. Beds") +
+  scale_y_continuous(labels = scales::comma_format(scale = 1e-3, suffix = "K")) +
+  theme_minimal()
+
+ggplot(filtered_df, aes(x = BATH, y = PRICE)) +
+  geom_point() +  
+  geom_smooth(method = "lm", se = FALSE) +  
+  labs(x = "Baths", y = "Price", title = "Price vs. Baths") +
+  scale_y_continuous(labels = scales::comma_format(scale = 1e-3, suffix = "K")) +
+  theme_minimal()
+```
+
