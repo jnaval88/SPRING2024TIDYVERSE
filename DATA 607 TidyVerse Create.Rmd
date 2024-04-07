@@ -1,0 +1,87 @@
+---
+title: "DATA 607 TidyVerse Create"
+author: "Biyag Dukuray"
+output: html_document
+date: "2024-04-03"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## DATA 607 TidyVerse Create
+
+In this assignment, you’ll practice collaborating around a code project with GitHub. You could consider our collective work as building out a book of examples on how to use TidyVerse functions.
+
+GitHub repository: <https://github.com/acatlin/SPRING2024TIDYVERSE>
+
+FiveThirtyEight.com datasets.
+
+Kaggle datasets.
+
+Your task here is to Create an Example. Using one or more TidyVerse packages, and any dataset from fivethirtyeight.com or Kaggle, create a programming sample “vignette” that demonstrates how to use one or more of the capabilities of the selected TidyVerse package with your selected dataset. (25 points)
+
+Later, you'll be asked to extend an existing vignette. Using one of your classmate’s examples (as created above), you'll then extend his or her example with additional annotated code. (15 points)
+
+You should clone the provided repository. Once you have code to submit, you should make a pull request on the shared repository. You should also update the README.md file with your example.
+
+After you’ve created your vignette, please submit your GitHub handle name in the submission link provided below. This will let your instructor know that your work is ready to be peer-graded.
+
+You should complete your submission on the schedule stated in the course syllabus.
+
+**The dataset that I decided to use to complete this assignment and demonstrate the uses and capabilities of the TidyVerse package is the "Insurance claims and policy data" from kaggle. This dataset is a a comprehensive collection designed to facilitate predictive analytics and risk assessment within the insurance industry. My theory is that people who are experiencing stressful life situations are more likely to have higher claims history thus resulting in a higher risk of policy payout. I believe indicuals who are experienceing either a seperation, divorce or widowed or more likely to have a higher claims history in comparison to people who are married or single. We will begin by loading the libraries needed to demonstrate the capabilities of the Tidyverse package as well as loading the insurance data into a dataframe.**
+
+**Link to dataset:** <https://www.kaggle.com/datasets/ravalsmit/insurance-claims-and-policy-data>
+
+```{r}
+library(tidyverse)
+library(readr)
+```
+
+```{r}
+kaggleurl <- "https://raw.githubusercontent.com/Zcash95/DATA607-files/main/data_synthetic.csv"
+
+insurance_data <- read_csv(kaggleurl)
+```
+
+**We will now take a look at the dataset to see what attributes we can use to assess and gauge our theory.**
+
+```{r}
+glimpse(insurance_data)
+```
+
+**I will use ggplot to help create a plot to visualize the relationship statuses of the insured.**
+
+```{r}
+marital_plot <- insurance_data %>% count(`Marital Status`) %>%
+ggplot(aes(x = `Marital Status`, y = n)) + geom_bar(stat = "identity", fill = "skyblue") +
+labs(title = "Distribution of Marital Status", x = "Marital Status", y = "Count") + theme_minimal()
+print(marital_plot)
+```
+
+**We can see that there is about an equal amount of people who are married or divorced but there are less people who are separated, single or widowed. We will now analyze whether there is a correlation between a persons relationship status and the amount of claims by persons in this group.**
+
+```{r}
+correlation <- insurance_data %>%
+mutate(`Marital Status` = factor(`Marital Status`)) %>%
+group_by(`Marital Status`) %>%
+summarise(mean_claim = mean(`Claim History`)) %>%
+arrange(desc(mean_claim))
+
+
+print(correlation)
+```
+
+**We can see the correlation shows that single and married people have less of a claims history in comparison to people who are separated, widowed or divorced. We will now use ggplot to visualize this correlation as well ordering the bars in the same order to demonstrate which relationship status is more likely to have a higher claims history thus being a higher risk for an insurance company.**
+
+```{r}
+correlation_plot <- correlation %>%
+ggplot(aes(x = reorder(`Marital Status`, -mean_claim), y = mean_claim, fill = `Marital Status`)) +
+geom_bar(stat = "identity") +
+labs(title = "Mean Claim Amount by Marital Status", x = "Marital Status", y = "Mean Claim Amount") + 
+theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(correlation_plot)
+```
+
+**Conclusion: GGplot2 gave us the ability to display this analysis of the data and the correlation between a persons relationship status and their insurance claims history. This confirmed my theory that people who are in stable situations such as being married or single will have less insurance claims in comparison to people who may be in stressful situations such as being separated, widowed or divorced. Though this is the case, this should not be the only factor analyzed by an insurance company to gauge the risk of a consumer.**
