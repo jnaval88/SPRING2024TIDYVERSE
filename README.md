@@ -167,6 +167,9 @@ Revision/Addition Description and Link:
 # Zig D
 
 Initial Description and Link:
+Demonstrates the use of TidyVerse package.
+
+https://github.com/Zcash95/SPRING2024TIDYVERSE
 
 Revision/Addition Description and Link:
 
