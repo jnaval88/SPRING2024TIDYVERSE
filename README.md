@@ -29,8 +29,8 @@ Revision/Addition Description and Link:
 
 # Angel G
 
-Initial Description and Link:
-
+Initial Description and Link: functions in dplyer and ggplot in the idyverse package
+https://github.com/Angelogallardo05/DATA607-tidyverse/blob/main/TIDYVERSE%20Assignment_NYC_House.Rmd
 Revision/Addition Description and Link:
 
 
