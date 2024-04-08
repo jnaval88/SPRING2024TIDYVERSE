@@ -84,7 +84,7 @@ Revision/Addition Description and Link:
 
 # James N
 
-Initial Description and Link: This is a test
+Initial Description and Link: Purrr from the tidyverse package using map function.
 
 Revision/Addition Description and Link:
 
